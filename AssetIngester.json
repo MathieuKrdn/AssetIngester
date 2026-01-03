@@ -1,0 +1,14 @@
+{
+    "name": "AssetIngester",
+    "env": [
+        {
+            "ASSETINGESTER_DIR": "C:/Users/HELLO/Documents/houdini21.0/packages/AssetIngester",
+            "HOUDINI_TOOLBAR_PATH": "$HOUDINI_TOOLBAR_PATH;$ASSETINGESTER_DIR/toolbar",
+            "HOUDINI_PATH": "$HOUDINI_PATH;$ASSETINGESTER_DIR/config/icons;&"
+            },
+        {
+            "PYTHONPATH": "$HOUDINI_PATH;$ASSETINGESTER_DIR/scripts;&"
+        }
+    ],
+    "path": "$ASSETINGESTER_DIR"  
+}

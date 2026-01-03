@@ -52,34 +52,67 @@ def createMtlx(hda, materialName, parm):
     material.layoutChildren()
 
     #---- Declare connections with the future HDA ----
-    albedoImage.parm("file").set(hda.eval("albedo"+parm))
-    albedoImage.parm("signature").set("Color")
-    albedoImage.parm("filecolorspace").set(hda.eval("colorspace"+parm))
+    albedo_parm = hda.parm("albedo__"+parm)
+    if albedo_parm:
+        albedoImage.parm("file").set(albedo_parm)
+        albedoImage.parm("signature").set("Color")
+    
+    colorspace_parm = hda.parm("colorspace__"+parm)
+    if colorspace_parm:
+        albedoImage.parm("filecolorspace").set(colorspace_parm)
+        roughnessImage.parm("filecolorspace").set(colorspace_parm)
+        metallicImage.parm("filecolorspace").set(colorspace_parm)
+        normalImage.parm("filecolorspace").set(colorspace_parm)
+        displaceImage.parm("filecolorspace").set(colorspace_parm)
 
-    roughnessImage.parm("file").set(hda.eval("roughness"+parm))
-    roughnessImage.parm("signature").set("Float")
+    roughness_parm = hda.parm("roughness__"+parm)
+    if roughness_parm:
+        roughnessImage.parm("file").set(roughness_parm)
+        roughnessImage.parm("signature").set("Float")
 
-    metallicImage.parm("file").set(hda.eval("metalness"+parm))
-    metallicImage.parm("signature").set("Float")
+    metalness_parm = hda.parm("metalness__"+parm)
+    if metalness_parm:
+        metallicImage.parm("file").set(metalness_parm)
+        metallicImage.parm("signature").set("Float")
 
-    normalImage.parm("file").set(hda.eval("normal"+parm))
-    normalImage.parm("signature").set("Vector2")
+    normal_parm = hda.parm("normal__"+parm)
+    if normal_parm:
+        normalImage.parm("file").set(normal_parm)
+        normalImage.parm("signature").set("Vector2")
 
-    displaceImage.parm("file").set(hda.eval("displacement"+parm))
-    displaceImage.parm("signature").set("Float")
+    displacement_parm = hda.parm("displacement__"+parm)
+    if displacement_parm:
+        displaceImage.parm("file").set(displacement_parm)
+        displaceImage.parm("signature").set("Float")
+
+    displacement_scale_parm = hda.parm("dispScale__"+parm)
+    if displacement_scale_parm:
+        displacement.parm("scale").set(displacement_scale_parm)
+
+    normalMap_scale_parm = hda.parm("normalScale__"+parm)
+    if normalMap_scale_parm:
+        normalMap.parm("scale").set(normalMap_scale_parm)
 
     material.setGenericFlag(hou.nodeFlag.Material, True)
 
-#--------------- LAUNCH ---------------    
-hda = hou.node("/stage/subnet1")
-materialName = "test"
-parm = kwargs['parm'][-3:]
+def material(node, kwargs):
+    """Main function called from HDA callback to create or navigate to material"""
+    hda = hou.node(".")
+    parm = kwargs['parm'].name()[-3:]
+    materialName = hda.parm("materialName_"+parm).eval()
+    
+    if hda.node(f"materiallibrary/{materialName}"):
+        print(f"Material '{materialName}' already exists")
+        material_node = hda.node(f"materiallibrary/{materialName}/mtlxstandard_surface")
+        material_node.setCurrent(True, clear_all_selected=True)
+        hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor).setCurrentNode(material_node)
+    else:
+        createMtlx(hda, materialName, parm)
+        material_node = hda.node(f"materiallibrary/{materialName}/mtlxstandard_surface")
+        if material_node:
+            material_node.setCurrent(True, clear_all_selected=True)
+            hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor).setCurrentNode(material_node)
+        print(f"Created MaterialX material '{materialName}' in material library 'materiallibrary'")
 
-if hda.node(f"materiallibrary/{materialName}"):
-    print(f"Material '{materialName}' already exists")
-    material = hda.node(f"materiallibrary/{materialName}/mtlxstandard_surface")
-    material.setCurrent(True, clear_all_selected=True)
-    hou.ui.paneTabOfType(hou.paneTabType.NetworkEditor).setCurrentNode(material)
-else:
-    createMtlx(hda, materialName, parm)
-    print(f"Created MaterialX material '{materialName}' in material library 'materiallibrary'")
+
+       
