@@ -55,7 +55,7 @@ def createMtlx(hda, materialName, parm):
     albedo_parm = hda.parm("albedo__"+parm)
     if albedo_parm:
         albedoImage.parm("file").set(albedo_parm)
-        albedoImage.parm("signature").set("Color")
+        albedoImage.parm("signature").set(0)
     
     colorspace_parm = hda.parm("colorspace__"+parm)
     if colorspace_parm:
@@ -78,12 +78,12 @@ def createMtlx(hda, materialName, parm):
     normal_parm = hda.parm("normal__"+parm)
     if normal_parm:
         normalImage.parm("file").set(normal_parm)
-        normalImage.parm("signature").set("Vector2")
+        normalImage.parm("signature").set("Color")
 
-    displacement_parm = hda.parm("displacement__"+parm)
+    displacement_parm = hda.parm("displacement__"+parm)     
     if displacement_parm:
         displaceImage.parm("file").set(displacement_parm)
-        displaceImage.parm("signature").set("Float")
+        displaceImage.parm("signature").set("Color")
 
     displacement_scale_parm = hda.parm("dispScale__"+parm)
     if displacement_scale_parm:

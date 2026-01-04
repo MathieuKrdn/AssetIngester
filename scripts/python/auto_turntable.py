@@ -21,7 +21,7 @@ def auto_turntable(asset, camera, focal, aperture, padding, node, stage):
         distance = (max_dim * padding) / math.tan(fov_rad / 2)
 
         #set the cam
-        cam_prim = UsdGeom.Camera.Define(stage, camera_path)
+        cam_prim = UsdGeom.Camera.Define(stage, camera)
         cam_xform = UsdGeom.Xformable(cam_prim)
         cam_xform.ClearXformOpOrder()
         cam_translate = cam_xform.AddTranslateOp()
